@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>DIVANSHI AUTO PARTS - Invoice</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:linear-gradient(135deg,#eef2f7 0%,#f8fafc 50%,#e9eef5 100%);
+  font-family:Arial,"Noto Sans",sans-serif;color:#111;
+}
+.app{max-width:1250px;margin:18px auto;padding:12px}
+.controls{
+  background:rgba(255,255,255,.97);border:1px solid #d6dbe3;border-radius:16px;
+  padding:18px;margin-bottom:18px;box-shadow:0 8px 24px rgba(0,0,0,.08)
+}
+.controls h2{margin:0 0 14px;font-size:21px}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.grid.seller{margin-top:12px}
+label{font-weight:700;font-size:13px;display:block;margin-bottom:5px}
+input,select,button{font:inherit}
+input,select{
+  width:100%;padding:10px 11px;border:1px solid #bfc7d2;border-radius:8px;
+  background:#fff;transition:border-color .2s,box-shadow .2s;min-width:0
+}
+input:focus,select:focus{outline:none;border-color:#111;box-shadow:0 0 0 3px rgba(17,17,17,.08)}
+textarea{
+  width:100%;padding:10px 11px;border:1px solid #bfc7d2;border-radius:8px;
+  background:#fff;font:inherit;resize:vertical;min-height:42px
+}
+textarea:focus{outline:none;border-color:#111;box-shadow:0 0 0 3px rgba(17,17,17,.08)}
+.full{grid-column:1/-1}
+.buttons{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+button{
+  border:0;border-radius:9px;padding:10px 15px;font-weight:700;cursor:pointer;
+  transition:transform .15s,box-shadow .15s
+}
+button:hover{transform:translateY(-1px);box-shadow:0 5px 12px rgba(0,0,0,.12)}
+button:active{transform:translateY(0)}
+.primary{background:#111;color:#fff}.secondary{background:#e8ebef;color:#111}
+.danger{background:#fee2e2;color:#991b1b}
+.hint{font-size:12px;color:#555;margin-top:9px}
+
+.bill{
+  background:#fff;width:100%;min-height:297mm;margin:auto;padding:8mm;border:2px solid #111;
+  overflow:hidden
+}
+.top{text-align:center;position:relative}
+.estimate{display:inline-block;background:#111;color:#fff;padding:5px 18px;border-radius:5px;font-size:20px;font-weight:800}
+.phone{position:absolute;right:0;top:4px;font-weight:700}
+h1{font-size:38px;margin:8px 0 4px;font-weight:900}
+.company-edit{
+  display:inline-block;border:0;border-bottom:1px solid #111;border-radius:0;
+  font-size:38px;font-weight:900;text-align:center;width:100%;max-width:760px;padding:2px;
+}
+.address-edit{
+  width:100%;border:2px solid #111;border-radius:18px;padding:5px 10px;font-size:17px;
+  font-weight:700;text-align:center;min-height:38px
+}
+.diamond{text-align:center;font-size:24px;margin:7px 0;border-bottom:2px solid #111;line-height:10px}
+.invoice-info{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:6px 15px;margin:10px 0
+}
+.info-box{font-size:14px;font-weight:700}
+.info-box input,.info-box textarea{
+  border:0;border-bottom:1px solid #111;border-radius:0;padding:2px 4px;font-weight:700;background:transparent
+}
+.info-box textarea{min-height:28px}
+.info-wide{grid-column:span 2}
+.table-wrap{width:100%;overflow-x:auto}
+table{width:100%;border-collapse:collapse;table-layout:fixed}
+th,td{border:1.5px solid #111;padding:4px}
+th{font-size:11px;text-align:center;line-height:1.1}
+td{height:42px;vertical-align:middle}
+.item-input{
+  width:100%;border:0;border-radius:0;padding:3px 2px;background:transparent;
+  font-size:11px;min-width:0
+}
+.item-input:focus{outline:1px solid #777;box-shadow:none}
+.num{text-align:center}
+.desc{font-size:11px}
+.del-cell{text-align:center;width:28px}
+.delete-row{
+  padding:3px 6px;background:#fee2e2;color:#991b1b;border-radius:5px;font-size:11px
+}
+tfoot td{font-weight:800}
+.summary{
+  margin-top:10px;display:grid;grid-template-columns:1.5fr 1fr;gap:18px
+}
+.words-box{font-size:14px;font-weight:700}
+.words-value{border-bottom:1px solid #111;min-height:25px;padding:3px}
+.totals{border:1.5px solid #111}
+.total-row{display:grid;grid-template-columns:1fr 120px;border-bottom:1px solid #111}
+.total-row:last-child{border-bottom:0}
+.total-row div{padding:5px 7px;font-size:13px}
+.total-row .label{text-align:right;font-weight:700}
+.total-row .value{text-align:right;font-weight:800}
+.grand{font-size:16px!important}
+.footer-note{text-align:center;font-size:14px;font-weight:700;line-height:1.5;margin-top:12px}
+.sign{text-align:right;margin-top:22px;font-weight:700}
+.thanks{text-align:center;border-top:1px solid #111;margin-top:25px;padding-top:4px;font-weight:800;font-size:19px}
+.print-only{display:none}
+
+@media(max-width:800px){
+  .app{padding:7px;margin:0}
+  .controls{padding:13px}
+  .grid{grid-template-columns:1fr 1fr}
+  .bill{padding:5mm;min-height:0}
+  .company-edit{font-size:27px}
+  .phone{position:static;margin-top:5px}
+  .invoice-info{grid-template-columns:1fr 1fr}
+  .info-wide{grid-column:1/-1}
+  .summary{grid-template-columns:1fr}
+  .table-wrap{overflow-x:auto}
+  table{min-width:1050px}
+}
+@media print{
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body{background:#fff}
+  .app{margin:0;padding:0;max-width:none}
+  .controls{display:none!important}
+  .bill{border:2px solid #111;margin:0;width:100%;min-height:0;padding:6mm;overflow:visible}
+  .top{padding-top:0}
+  .estimate{padding:3px 14px;font-size:16px}
+  .phone{font-size:11px}
+  .company-edit{font-size:27px}
+  .address-edit{font-size:12px;padding:3px 8px;min-height:28px}
+  .diamond{font-size:17px;margin:4px 0;line-height:7px}
+  .invoice-info{gap:3px 10px;margin:6px 0}
+  .info-box{font-size:11px}
+  .info-box input,.info-box textarea{font-size:11px;padding:1px 2px}
+  .table-wrap{overflow:visible}
+  table{width:100%;min-width:0;table-layout:fixed}
+  th{font-size:8px;padding:3px}
+  td{height:31px;padding:2px}
+  .item-input{font-size:8px;padding:2px 1px}
+  .delete-col,.delete-cell{display:none!important}
+  .summary{margin-top:6px;gap:10px}
+  .words-box{font-size:10px}
+  .total-row{grid-template-columns:1fr 85px}
+  .total-row div{padding:3px 4px;font-size:9px}
+  .grand{font-size:11px!important}
+  .footer-note{font-size:10px;margin-top:6px}
+  .sign{margin-top:12px;font-size:10px}
+  .thanks{margin-top:12px;padding-top:2px;font-size:13px}
+  .print-only{display:block}
+  @page{size:A4 landscape;margin:6mm}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="controls">
+    <h2>Invoice Details — Fill / Edit Everything</h2>
+
+    <div class="grid">
+      <div>
+        <label>Invoice No.</label>
+        <input id="invoiceNo" type="text" placeholder="Invoice number">
+      </div>
+      <div>
+        <label>Date</label>
+        <input id="invoiceDate" type="date">
+      </div>
+      <div>
+        <label>Pick List No.</label>
+        <input id="pickListNo" type="text" placeholder="Pick List No.">
+      </div>
+      <div>
+        <label>Buyer / M/s.</label>
+        <input id="buyerName" type="text" placeholder="Buyer name">
+      </div>
+      <div class="full">
+        <label>Buyer Address</label>
+        <textarea id="buyerAddress" placeholder="Buyer address"></textarea>
+      </div>
+      <div>
+        <label>Buyer GSTIN</label>
+        <input id="buyerGSTIN" type="text" placeholder="GSTIN">
+      </div>
+      <div>
+        <label>Buyer Mobile</label>
+        <input id="buyerMobile" type="tel" inputmode="tel" placeholder="Mobile number">
+      </div>
+    </div>
+
+    <div class="grid seller">
+      <div>
+        <label>Seller / Company Name</label>
+        <input id="sellerName" type="text" value="DIVANSHI AUTO PARTS">
+      </div>
+      <div class="full">
+        <label>Seller Address</label>
+        <textarea id="sellerAddress">Seller address</textarea>
+      </div>
+      <div>
+        <label>Seller GSTIN</label>
+        <input id="sellerGSTIN" type="text" placeholder="Seller GSTIN">
+      </div>
+      <div>
+        <label>Seller Mobile</label>
+        <input id="sellerMobile" type="tel" inputmode="tel" placeholder="Seller mobile">
+      </div>
+    </div>
+
+    <div class="buttons">
+      <button class="primary" type="button" id="addBtn">+ Add New Item</button>
+      <button class="primary" type="button" id="pdfBtn">Save as PDF</button>
+      <button class="secondary" type="button" id="printBtn">Print</button>
+      <button class="secondary" type="button" id="clearBtn">Clear Invoice</button>
+    </div>
+    <div class="hint">All item fields are editable, including Rate, Discount %, Discount Amount, and Tax %. On Android Chrome, tap a field and type normally.</div>
+  </div>
+
+  <div class="bill" id="bill">
+    <div class="top">
+      <div class="estimate">TAX INVOICE</div>
+      <div class="phone" id="printSellerMobile"></div>
+      <input id="printSellerName" class="company-edit" type="text" value="DIVANSHI AUTO PARTS" aria-label="Company name">
+      <textarea id="printSellerAddress" class="address-edit" aria-label="Seller address">Seller address</textarea>
+    </div>
+
+    <div class="diamond">◆ ◆</div>
+
+    <div class="invoice-info">
+      <div class="info-box">Invoice No.<input id="pInvoiceNo" type="text"></div>
+      <div class="info-box">Date<input id="pInvoiceDate" type="text"></div>
+      <div class="info-box">Pick List No.<input id="pPickListNo" type="text"></div>
+
+      <div class="info-box info-wide">Buyer / M/s.<input id="pBuyerName" type="text"></div>
+      <div class="info-box">Mobile<input id="pBuyerMobile" type="text"></div>
+
+      <div class="info-box info-wide">Address<textarea id="pBuyerAddress"></textarea></div>
+      <div class="info-box">GSTIN<input id="pBuyerGSTIN" type="text"></div>
+
+      <div class="info-box info-wide">Seller GSTIN<input id="pSellerGSTIN" type="text"></div>
+    </div>
+
+    <div class="table-wrap">
+      <table id="items">
+        <thead>
+          <tr>
+            <th style="width:24px">#</th>
+            <th style="width:18%">Item Description</th>
+            <th style="width:7%">HSN/SAC</th>
+            <th style="width:8%">Part Number</th>
+            <th style="width:5%">Qty</th>
+            <th style="width:6%">MRP</th>
+            <th style="width:7%">Rate</th>
+            <th style="width:6%">UOM</th>
+            <th style="width:5%">Disc %</th>
+            <th style="width:6%">Tax %</th>
+            <th style="width:9%">Discount<br>Amount</th>
+            <th style="width:9%">Rate</th>
+            <th style="width:10%">Taxable<br>Amount</th>
+            <th style="width:8%">Tax<br>Amount</th>
+            <th style="width:9%">Amount</th>
+            <th class="delete-col" style="width:34px">Del</th>
+          </tr>
+        </thead>
+        <tbody id="itemBody"></tbody>
+      </table>
+    </div>
+
+    <div class="summary">
+      <div class="words-box">
+        Amount in Words:
+        <div class="words-value" id="amountWords">Zero Rupees Only</div>
+      </div>
+      <div class="totals">
+        <div class="total-row"><div class="label">Subtotal / Taxable Amount</div><div class="value" id="taxableTotal">0.00</div></div>
+        <div class="total-row"><div class="label">Discount Amount</div><div class="value" id="discountTotal">0.00</div></div>
+        <div class="total-row"><div class="label">Tax Amount</div><div class="value" id="taxTotal">0.00</div></div>
+        <div class="total-row"><div class="label">CGST</div><div class="value" id="cgstTotal">0.00</div></div>
+        <div class="total-row"><div class="label">SGST</div><div class="value" id="sgstTotal">0.00</div></div>
+        <div class="total-row"><div class="label">Round Off</div><div class="value" id="roundOff">0.00</div></div>
+        <div class="total-row"><div class="label grand">Grand Total</div><div class="value grand" id="grandTotal">0.00</div></div>
+      </div>
+    </div>
+
+    <div class="footer-note">Goods / services as entered above. This invoice is generated from the information entered by the user.</div>
+    <div class="sign">____________________<br>Authorised Signatory</div>
+    <div class="thanks">Thank You!</div>
+  </div>
+</div>
+
+<script>
+(function(){
+"use strict";
+
+const $ = id => document.getElementById(id);
+const itemBody = $("itemBody");
+
+function esc(v){
+  return String(v ?? "").replace(/[&<>"']/g, c => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[c]));
+}
+
+function money(n){ return (Number(n)||0).toFixed(2); }
+
+function numberToWords(n){
+  n = Math.floor(Number(n)||0);
+  if(n===0) return "Zero";
+  const ones=["","One","Two","Three","Four","Five","Six","Seven","Eight","Nine","Ten","Eleven","Twelve","Thirteen","Fourteen","Fifteen","Sixteen","Seventeen","Eighteen","Nineteen"];
+  const tens=["","","Twenty","Thirty","Forty","Fifty","Sixty","Seventy","Eighty","Ninety"];
+  function two(x){
+    if(x<20) return ones[x];
+    return tens[Math.floor(x/10)] + (x%10 ? " "+ones[x%10] : "");
+  }
+  function part(x){
+    let s="";
+    if(x>=10000000){s+=two(Math.floor(x/10000000))+" Crore ";x%=10000000;}
+    if(x>=100000){s+=two(Math.floor(x/100000))+" Lakh ";x%=100000;}
+    if(x>=1000){s+=two(Math.floor(x/1000))+" Thousand ";x%=1000;}
+    if(x>=100){s+=ones[Math.floor(x/100)]+" Hundred ";x%=100;}
+    if(x>0)s+=two(x);
+    return s.trim();
+  }
+  return part(n);
+}
+
+function addRow(){
+  const tr=document.createElement("tr");
+  tr.innerHTML=`
+    <td class="num row-no"></td>
+    <td><input class="item-input desc" type="text" autocomplete="off" spellcheck="false"></td>
+    <td><input class="item-input num hsn" type="text" inputmode="text" autocomplete="off"></td>
+    <td><input class="item-input partno" type="text" autocomplete="off"></td>
+    <td><input class="item-input num qty" type="number" min="0" step="any" inputmode="decimal" value=""></td>
+    <td><input class="item-input num mrp" type="number" min="0" step="0.01" inputmode="decimal" value="" placeholder="MRP"></td>
+     <td class="num rate">0.00</td>
+    <td><input class="item-input num uom" type="text" autocomplete="off" placeholder=""></td>
+    <td><input class="item-input num disc" type="number" min="0" max="100" step="0.01" inputmode="decimal" value="" placeholder="Disc %"></td>
+    <td><input class="item-input num gst" type="number" min="0" step="0.01" inputmode="decimal" value="" placeholder="Tax %"></td>
+    <td class="num discount-amount">0.00</td>
+    <td class="num rate-after">0.00</td>
+    <td class="num taxable">0.00</td>
+    <td class="num tax-amount">0.00</td>
+    <td class="num line-total">0.00</td>
+    <td class="delete-cell delete-col"><button type="button" class="delete-row" title="Delete item">×</button></td>
+  `;
+  itemBody.appendChild(tr);
+  tr.querySelectorAll("input").forEach(inp => inp.addEventListener("input", calc));
+  tr.querySelector(".delete-row").addEventListener("click", ()=>{
+    tr.remove();
+    renumber();
+    calc();
+  });
+  renumber();
+  calc();
+}
+
+function renumber(){
+  [...itemBody.querySelectorAll("tr")].forEach((tr,i)=>{
+    tr.querySelector(".row-no").textContent=i+1;
+  });
+}
+
+function rowHasData(tr){
+  return [...tr.querySelectorAll("input")].some(i => String(i.value||"").trim()!=="");
+}
+
+function calc(){
+  let taxableTotal=0, discountTotal=0, taxTotal=0, grossTotal=0;
+  [...itemBody.querySelectorAll("tr")].forEach(tr=>{
+    const qty=Number(tr.querySelector(".qty").value)||0;
+    const mrp=Number(tr.querySelector(".mrp").value)||0;
+    const disc=Number(tr.querySelector(".disc").value)||0;
+    const gst=Number(tr.querySelector(".gst").value)||0;
+
+    // Invoice formula:
+    // Discount Amount = Qty × MRP × Discount %
+    // Rate = MRP - Discount per unit
+    // Taxable Amount = Qty × Rate
+    // Tax Amount = Taxable Amount × Tax %
+    const gross=qty*mrp;
+    const discount=gross*disc/100;
+    const rateAfter=mrp*(1-disc/100);
+    const taxable=qty*rateAfter;
+    const tax=taxable*gst/100;
+    const amount=taxable+tax;
+
+    tr.querySelector(".discount-amount").textContent=money(discount);
+    tr.querySelector(".rate").textContent=money(rateAfter);
+    tr.querySelector(".taxable").textContent=money(taxable);
+    tr.querySelector(".tax-amount").textContent=money(tax);
+    tr.querySelector(".line-total").textContent=money(amount);
+
+    if(rowHasData(tr)){
+      discountTotal+=discount;
+      taxableTotal+=taxable;
+      taxTotal+=tax;
+      grossTotal+=amount;
+    }
+  });
+
+  const cgst=taxTotal/2;
+  const sgst=taxTotal/2;
+  const rounded=grossTotal;
+  const roundOff=0;
+
+  $("taxableTotal").textContent=money(taxableTotal);
+  $("discountTotal").textContent=money(discountTotal);
+  $("taxTotal").textContent=money(taxTotal);
+  $("cgstTotal").textContent=money(cgst);
+  $("sgstTotal").textContent=money(sgst);
+  $("roundOff").textContent=money(roundOff);
+  $("grandTotal").textContent=money(rounded);
+  $("amountWords").textContent=numberToWords(rounded)+" Rupees Only";
+}
+
+function syncField(sourceId,targetId,formatter){
+  const s=$(sourceId), t=$(targetId);
+  s.addEventListener("input",()=>{t.value=formatter?formatter(s.value):s.value;});
+  t.addEventListener("input",()=>{s.value=formatter?formatter(t.value):t.value;});
+  t.value=formatter?formatter(s.value):s.value;
+}
+
+syncField("invoiceNo","pInvoiceNo");
+syncField("pickListNo","pPickListNo");
+syncField("buyerName","pBuyerName");
+syncField("buyerAddress","pBuyerAddress");
+syncField("buyerMobile","pBuyerMobile");
+syncField("buyerGSTIN","pBuyerGSTIN");
+syncField("sellerGSTIN","pSellerGSTIN");
+syncField("sellerName","printSellerName");
+syncField("sellerAddress","printSellerAddress");
+syncField("sellerMobile","printSellerMobile");
+
+$("invoiceDate").addEventListener("input",()=>{
+  const v=$("invoiceDate").value;
+  $("pInvoiceDate").value=v ? new Date(v+"T00:00:00").toLocaleDateString("en-GB") : "";
+});
+$("pInvoiceDate").addEventListener("input",()=>{});
+$("invoiceDate").value=new Date().toISOString().slice(0,10);
+$("pInvoiceDate").value=new Date().toLocaleDateString("en-GB");
+
+$("addBtn").addEventListener("click",addRow);
+
+$("clearBtn").addEventListener("click",()=>{
+  if(!confirm("Clear the entire invoice?")) return;
+  document.querySelectorAll(".controls input,.controls textarea").forEach(el=>{
+    if(el.id==="sellerName") el.value="DIVANSHI AUTO PARTS";
+    else if(el.id==="sellerAddress") el.value="Seller address";
+    else el.value="";
+  });
+  $("invoiceDate").value=new Date().toISOString().slice(0,10);
+  itemBody.innerHTML="";
+  addRow();
+  syncAll();
+  calc();
+});
+
+function syncAll(){
+  const pairs=[
+    ["invoiceNo","pInvoiceNo"],["pickListNo","pPickListNo"],["buyerName","pBuyerName"],
+    ["buyerAddress","pBuyerAddress"],["buyerMobile","pBuyerMobile"],["buyerGSTIN","pBuyerGSTIN"],
+    ["sellerGSTIN","pSellerGSTIN"],["sellerName","printSellerName"],["sellerAddress","printSellerAddress"]
+  ];
+  pairs.forEach(([a,b])=>$(b).value=$(a).value);
+  $("printSellerMobile").textContent=$("sellerMobile").value ? "Mo. "+$("sellerMobile").value : "";
+  $("pInvoiceDate").value=$("invoiceDate").value ? new Date($("invoiceDate").value+"T00:00:00").toLocaleDateString("en-GB") : "";
+}
+$("sellerMobile").addEventListener("input",syncAll);
+
+function preparePrint(){
+  document.querySelectorAll("#itemBody tr").forEach(tr=>{
+    tr.dataset.printHidden=rowHasData(tr) ? "0" : "1";
+    if(!rowHasData(tr)) tr.classList.add("print-empty-row");
+  });
+  calc();
+}
+
+function cleanupPrint(){
+  document.querySelectorAll("#itemBody tr.print-empty-row").forEach(tr=>tr.classList.remove("print-empty-row"));
+}
+
+const printStyle=document.createElement("style");
+printStyle.textContent="@media print{#itemBody tr.print-empty-row{display:none!important}}";
+document.head.appendChild(printStyle);
+
+window.addEventListener("beforeprint",preparePrint);
+window.addEventListener("afterprint",cleanupPrint);
+
+$("printBtn").addEventListener("click",()=>{
+  syncAll();
+  preparePrint();
+  window.print();
+  setTimeout(cleanupPrint,1000);
+});
+$("pdfBtn").addEventListener("click",()=>{
+  syncAll();
+  preparePrint();
+  window.print();
+  setTimeout(cleanupPrint,1000);
+});
+
+addRow();
+syncAll();
+calc();
+})();
+</script>
+</body>
+</html>
